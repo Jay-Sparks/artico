@@ -17,7 +17,7 @@ exports.getArticleById = (req, res, next) => {
             article.length === 1 ?
                 res.status(200).send({ article: article[0] })
                 :
-                res.status(400).send({ msg: "No articles found" })    
+                res.status(404).send({ msg: "No articles found" })    
         })
         .catch((err) => {
             next(err)

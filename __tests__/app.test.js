@@ -80,7 +80,7 @@ describe("GET /api/topics", () => {
     })
 })
 
-describe.only("GET /api/articles", () => {
+describe("GET /api/articles", () => {
     it("returns an array of objects", () => {
         return request(app)
             .get('/api/articles')
