@@ -1,4 +1,3 @@
-const db = require('../db/connection')
 const { selectTopics } = require('../models/topics.model')
 
 exports.getTopics = ( req, res, next) => {
