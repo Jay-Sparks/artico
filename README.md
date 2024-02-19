@@ -1,3 +1,16 @@
-# Northcoders News API
+# News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+Instructions
+
+In order to run this project, first clone the repository. 
+
+In your CLI run:
+```
+npm install
+```
+
+Next create your own .env test and development environments that reference your own databases, using:
+
+``` 
+PGDATABASE=database_name_here
+```
