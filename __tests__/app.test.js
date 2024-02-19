@@ -14,7 +14,7 @@ afterAll(() => {
 })
 
 describe("Error codes", () => {
-    it("returns a 404 status if summoned with an incorrect api url", () => {
+    it("GET /incorrect-url returns a 404 status", () => {
         return request(app)
             .get('/apx')
             .expect(404)
@@ -22,12 +22,22 @@ describe("Error codes", () => {
                 expect(response.res.statusMessage).toBe('Not Found')
             })
     })
-    it("returns a 404 status if summoned with an incorrect topics url", () => {
+    it("GET /api/articles/:article_id returns a 404 status if no articles can be found with ID", () => {
         return request(app)
-            .get('/api/not-topics')
+            .get('/api/articles/99999999')
             .expect(404)
             .then((response) => {
-                expect(response.res.statusMessage).toBe('Not Found')
+                expect(JSON.parse(response.text)).toEqual({ msg: "No articles found"})
+                
+            })
+    })
+    it("GET /api/articles/:article_id returns a 404 status if no comments can be found", () => {
+        return request(app)
+            .get('/api/articles/2/comments')
+            .expect(404)
+            .then((response) => {
+                expect(JSON.parse(response.text)).toEqual({ msg: "No comments found"})
+                
             })
     })
 })
@@ -159,13 +169,35 @@ describe("GET /api/articles/:article_id", () => {
                 expect(articleArr.length).toBe(1)
             })
     })
-    it("returns a 404 status if no article is found with the given ID", () => {
+})
+
+
+describe("GET /api/articles/:article_id/comments", () => {
+    it("returns an array of comment objects with the correct properties", () => {
         return request(app)
-            .get('/api/articles/99999999')
-            .expect(404)
+            .get('/api/articles/1/comments')
+            .expect(200)
             .then((response) => {
-                expect(JSON.parse(response.text)).toEqual({ msg: "No articles found"})
+                expect(Array.isArray(response.body.comments)).toBe(true)
+                const comments = response.body.comments
+                expect(comments.length).toBe(11)
+                comments.forEach((comment) => {
+                    expect(comment).toBeObject()
+                    expect(comment).toHaveProperty('comment_id')
+                    expect(comment).toHaveProperty('votes')
+                    expect(comment).toHaveProperty('created_at')
+                    expect(comment).toHaveProperty('author')
+                    expect(comment).toHaveProperty('body')
+                    expect(comment).toHaveProperty('article_id')
+                })
             })
     })
-
+    it("comments are sorted by date in descending order", () => {
+        return request(app)
+            .get('/api/articles/1/comments')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.comments).toBeSortedBy('created_at', {descending: true})
+            })
+    })
 })

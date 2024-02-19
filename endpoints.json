@@ -52,5 +52,20 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments for a single article",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "Lobster pot",
+          "votes": 0,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": 1589577540000
+        }
+      ]
+    }
   }
 }
