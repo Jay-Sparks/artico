@@ -13,6 +13,32 @@ afterAll(() => {
     db.end();
 })
 
+describe("GET /api", () => {
+    it("returns a JSON object that includes a description, query & example response", () => {
+        return request(app)
+            .get('/api')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.endpoints).toHaveProperty("GET /api/topics")
+                const endpoints = response.body.endpoints
+                const endpointArr = Object.values(endpoints)
+                endpointArr.forEach((endpoint) => {
+                    expect(endpoint).toHaveProperty('description')
+                    expect(endpoint).toHaveProperty('queries')
+                    expect(endpoint).toHaveProperty('exampleResponse')
+                })
+            })
+    })
+    it("returns a 404 status if summoned with an incorrect url", () => {
+        return request(app)
+            .get('/apx')
+            .expect(404)
+            .then((response) => {
+                expect(response.res.statusMessage).toBe('Not Found')
+            })
+    })
+})
+
 describe("GET /api/topics", () => {
     it("returns an array of objects", () => {
         return request(app)
