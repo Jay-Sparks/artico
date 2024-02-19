@@ -80,6 +80,49 @@ describe("GET /api/topics", () => {
     })
 })
 
+describe.only("GET /api/articles", () => {
+    it("returns an array of objects", () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                expect(Array.isArray(response.body.articles)).toBe(true)
+                const articles = response.body.articles
+                expect(articles.length).toBe(13)
+                articles.forEach((article) => {
+                    expect(article).toBeObject()
+                })
+            })
+    })
+    it("article objects contain the correct properties and NOT a body", () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles
+                expect(articles.length).toBe(13)
+                articles.forEach((article) => {
+                    expect(article).toHaveProperty('author')
+                    expect(article).toHaveProperty('title')
+                    expect(article).toHaveProperty('article_id')
+                    expect(article).toHaveProperty('topic')
+                    expect(article).toHaveProperty('created_at')
+                    expect(article).toHaveProperty('votes')
+                    expect(article).toHaveProperty('article_img_url')
+                    expect(article).not.toHaveProperty('body')
+                })
+            })
+    })
+    it("articles are sorted by date in descending order", () => {
+        return request(app)
+            .get('/api/articles')
+            .expect(200)
+            .then((response) => {
+                expect(response.body.articles).toBeSortedBy('created_at', {descending: true})
+            })
+    })
+})
+
 
 describe("GET /api/articles/:article_id", () => {
     it("returns an article object", () => {
@@ -116,10 +159,10 @@ describe("GET /api/articles/:article_id", () => {
                 expect(articleArr.length).toBe(1)
             })
     })
-    it("returns a 400 status if no article is found with the given ID", () => {
+    it("returns a 404 status if no article is found with the given ID", () => {
         return request(app)
             .get('/api/articles/99999999')
-            .expect(400)
+            .expect(404)
             .then((response) => {
                 expect(JSON.parse(response.text)).toEqual({ msg: "No articles found"})
             })
