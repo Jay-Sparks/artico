@@ -19,10 +19,10 @@ describe("GET /api/topics", () => {
             .get('/api/topics')
             .expect(200)
             .then((response) => {
-                expect(Array.isArray(response.body)).toBe(true)
-                const body = response.body
-                body.forEach((obj) => {
-                    expect(obj === Object(obj)).toBe(true)
+                expect(Array.isArray(response.body.topics)).toBe(true)
+                const topics = response.body.topics
+                topics.forEach((topic) => {
+                    expect(topic === Object(topic)).toBe(true)
                 })
             })
     })
@@ -31,10 +31,10 @@ describe("GET /api/topics", () => {
             .get('/api/topics')
             .expect(200)
             .then((response) => {
-                const body = response.body
-                body.forEach((obj) => {
-                    expect(obj).toHaveProperty('slug')
-                    expect(obj).toHaveProperty('description')
+                const topics = response.body.topics
+                topics.forEach((topic) => {
+                    expect(topic).toHaveProperty('slug')
+                    expect(topic).toHaveProperty('description')
                 })
             })
     })
