@@ -11,8 +11,17 @@ exports.selectArticles = () => {
 }
 
 exports.selectArticleById = (articleId) => {
-    return db.query(`SELECT * FROM articles WHERE article_id = ${articleId}`)
-        .then((article) => {
-            return article.rows
-        })
+    const numberTest = Number(articleId)
+    if(isNaN(numberTest)) {
+        return Promise.reject({status: 400, msg: "Bad Request"})
+    } else {
+        return db.query(`SELECT * FROM articles WHERE article_id=$1`, [articleId])
+            .then(({rows}) => {
+                if(rows.length === 0) {
+                    return Promise.reject({status: 404, msg: "Not Found"})
+                } else {
+                    return rows
+                }
+            })
+    }
 }
