@@ -2,7 +2,7 @@ const express = require('express')
 const { getTopics } = require('./controllers/topics.controller')
 const { getEndpoints } = require('./controllers/endpoints.controller')
 const { getArticleById, getArticles, addVoteById } = require('./controllers/articles.controller')
-const { getCommentsByArtId, addCommentByArtId } = require('./controllers/comments.controller')
+const { getCommentsByArtId, addCommentByArtId, removeComment } = require('./controllers/comments.controller')
 
 const app = express()
 
@@ -21,6 +21,8 @@ app.patch('/api/articles/:article_id', addVoteById)
 app.get('/api/articles/:article_id/comments', getCommentsByArtId)
 
 app.post('/api/articles/:article_id/comments', addCommentByArtId)
+
+app.delete('/api/comments/:comment_id', removeComment)
 
 app.use(( err, req, res, next ) => {
     if(!err.msg && err.code === "42703") {

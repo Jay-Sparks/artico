@@ -126,6 +126,24 @@ describe("Error codes", () => {
                 expect(error.msg).toBe("Bad Request")
             })
     })
+    it("DELETE /api/comments/:comment_id returns a 400 status for an invalid id ", () => {
+        return request(app)
+            .delete('/api/comments/notAnId')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("DELETE /api/comments/:comment_id returns a 404 status when comment_id does not exist", () => {
+        return request(app)
+            .delete('/api/comments/999999')
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
+            })
+    })
 })
 
 
@@ -340,7 +358,6 @@ describe("PATCH /api/articles/:article_id", () => {
             .send({ inc_votes : 1 })
             .expect(200)
             .then((response) => {
-                console.log(response.body.article);
                 expect(response.body.article).toMatchObject({
                     article_id: 1,
                     title: "Living in the shadow of a great man",
@@ -371,6 +388,20 @@ describe("PATCH /api/articles/:article_id", () => {
                     article_img_url:
                       "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
                   })
+            })
+    })
+})
+
+describe("DELETE /api/comments/:comment_id", () => {
+    it("comment no longer exists in comments table and returns a 204 status", () => {
+        return request(app)
+            .delete('/api/comments/7')
+            .expect(204)
+            .then(() => {
+                return db.query('SELECT * FROM comments WHERE comment_id = 7')
+                    .then(({rows}) => {
+                        expect(rows.length === 0).toBe(true)
+                    }) 
             })
     })
 })

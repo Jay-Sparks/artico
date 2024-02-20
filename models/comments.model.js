@@ -24,3 +24,20 @@ exports.insertComment = (body, articleId, author, votes = 0) => {
             })
     })
 }
+
+exports.deleteComment = (comment_id) => {
+    const commentNum = Number(comment_id)
+    if(isNaN(commentNum)) {
+        return Promise.reject({status: 400, msg: "Bad Request"})
+    } else {
+        return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *', [commentNum])
+            .then(({rows}) => {
+                if(rows.length === 0) {
+                    return Promise.reject({ status: 404, msg: "Not Found"})
+                }
+                else {
+                    return { status: 204 }
+                }
+            })
+    }
+}
