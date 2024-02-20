@@ -96,6 +96,36 @@ describe("Error codes", () => {
                 expect(error.msg).toBe("Not Found")
             })
     })
+    it("PATCH /api/articles/:article_id returns a 404 status if the article_id does not exist", () => {
+        return request(app)
+            .patch('/api/articles/555555')
+            .send({ inc_votes : 1 })
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
+            })
+    })
+    it("PATCH /api/articles/:article_id returns a 400 status for an invalid article_id", () => {
+        return request(app)
+            .patch('/api/articles/not-a-num')
+            .send({ inc_votes : 1 })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("PATCH /api/articles/:article_id returns a 400 status for an incomplete/invalid request body", () => {
+        return request(app)
+            .patch('/api/articles/8')
+            .send({ upVotes : 1 })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
 })
 
 
@@ -262,7 +292,7 @@ describe("GET /api/articles/:article_id/comments", () => {
 
 
 describe("POST /api/articles/:article_id/comments", () => {
-    it("returns an object with the correct properties", () => {
+    it("returns a comment object with the correct properties", () => {
         return request(app)
             .post("/api/articles/3/comments")
             .send({
@@ -279,7 +309,7 @@ describe("POST /api/articles/:article_id/comments", () => {
                 expect(comment).toHaveProperty('created_at')
             })
         })
-    it("comment is saved in database", () => {
+    it("comment is stored correctly in database", () => {
         return request(app)
             .post("/api/articles/4/comments")
             .send({
@@ -298,6 +328,50 @@ describe("POST /api/articles/:article_id/comments", () => {
                         expect(commentObj).toHaveProperty('article_id')
                         expect(commentObj).toHaveProperty('created_at')
                     })
+            })
+    })
+})
+
+
+describe("PATCH /api/articles/:article_id", () => {
+    it("returns an article object with the correct vote property updated", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes : 1 })
+            .expect(200)
+            .then((response) => {
+                console.log(response.body.article);
+                expect(response.body.article).toMatchObject({
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: "2020-07-09T20:11:00.000Z",
+                    votes: 101,
+                    article_img_url:
+                      "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                  })
+            })
+    })
+    it("decrements the value when passed a negative number", () => {
+        return request(app)
+            .patch("/api/articles/1")
+            .send({ inc_votes : -10 })
+            .expect(200)
+            .then((response) => {
+                console.log(response.body.article);
+                expect(response.body.article).toMatchObject({
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: "2020-07-09T20:11:00.000Z",
+                    votes: 90,
+                    article_img_url:
+                      "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                  })
             })
     })
 })
