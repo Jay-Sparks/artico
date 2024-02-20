@@ -27,20 +27,78 @@ describe("Error codes", () => {
             .get('/api/articles/99999999')
             .expect(404)
             .then((response) => {
-                expect(JSON.parse(response.text)).toEqual({ msg: "No articles found"})
-                
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
             })
     })
-    it("GET /api/articles/:article_id returns a 404 status if no comments can be found", () => {
+    it("GET /api/articles/:article_id returns a 400 status for an invalid article_id", () => {
+        return request(app)
+            .get('/api/articles/not-a-num')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("GET /api/articles/:article_id/comments returns a 404 status if no comments can be found", () => {
         return request(app)
             .get('/api/articles/2/comments')
             .expect(404)
             .then((response) => {
                 expect(JSON.parse(response.text)).toEqual({ msg: "No comments found"})
-                
+            })
+    })
+    it("GET /api/articles/:article_id/comments returns a 400 status for an invalid article_id", () => {
+        return request(app)
+            .get('/api/articles/not-a-num/comments')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("POST /api/articles/:article_id/comments returns a 400 status for an invalid article_id", () => {
+        return request(app)
+            .post('/api/articles/not-a-num/comments')
+            .send({
+                username: "rogersop",
+                body: "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+            })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("POST /api/articles/:article_id/comments returns a 400 status for an incomplete/invalid request body", () => {
+        return request(app)
+            .post('/api/articles/5/comments')
+            .send({
+                username: "rogersop",
+                content: "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+            })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("POST /api/articles/:article_id/comments returns a 404 status if the username does not exist", () => {
+        return request(app)
+            .post('/api/articles/5/comments')
+            .send({
+                username: "grumpy19",
+                body: "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+            })
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
             })
     })
 })
+
+
 
 describe("GET /api", () => {
     it("returns a JSON object that includes a description, query & example response", () => {
@@ -198,6 +256,48 @@ describe("GET /api/articles/:article_id/comments", () => {
             .expect(200)
             .then((response) => {
                 expect(response.body.comments).toBeSortedBy('created_at', {descending: true})
+            })
+    })
+})
+
+
+describe("POST /api/articles/:article_id/comments", () => {
+    it("returns an object with the correct properties", () => {
+        return request(app)
+            .post("/api/articles/3/comments")
+            .send({
+                username: "rogersop",
+                body: "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+            })
+            .expect(201)
+            .then((response) => {
+                const comment = response.body.comment
+                expect(comment).toHaveProperty('body')
+                expect(comment).toHaveProperty('votes')
+                expect(comment).toHaveProperty('author')
+                expect(comment).toHaveProperty('article_id')
+                expect(comment).toHaveProperty('created_at')
+            })
+        })
+    it("comment is saved in database", () => {
+        return request(app)
+            .post("/api/articles/4/comments")
+            .send({
+                username: "rogersop",
+                body: "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+            })
+            .expect(201)
+            .then((response) => {
+                return db.query('SELECT * FROM comments WHERE article_id = 4')
+                    .then((returnedComments) => {
+                        const commentObj = JSON.parse(JSON.stringify(returnedComments.rows[0]))
+                        expect(commentObj).toEqual(expect.objectContaining(response.body.comment))
+                        expect(commentObj).toHaveProperty('body')
+                        expect(commentObj).toHaveProperty('votes')
+                        expect(commentObj).toHaveProperty('author')
+                        expect(commentObj).toHaveProperty('article_id')
+                        expect(commentObj).toHaveProperty('created_at')
+                    })
             })
     })
 })
