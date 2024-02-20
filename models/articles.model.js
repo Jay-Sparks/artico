@@ -25,3 +25,20 @@ exports.selectArticleById = (articleId) => {
             })
     }
 }
+
+exports.incrementVote = (inc_votes, article_id) => {
+    const voteNum = Number(inc_votes)
+    const idNum = Number(article_id)
+    if(isNaN(idNum)) {
+        return Promise.reject({status: 400, msg: "Bad Request"})
+    } else {
+        return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id=$2 RETURNING *`, [voteNum, idNum])
+            .then(({rows}) => {
+                if(rows.length === 0) {
+                    return Promise.reject({status: 404, msg: "Not Found"})
+                } else {
+                    return rows
+                }
+            })
+    }
+}
