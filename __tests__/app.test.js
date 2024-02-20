@@ -360,7 +360,6 @@ describe("PATCH /api/articles/:article_id", () => {
             .send({ inc_votes : -10 })
             .expect(200)
             .then((response) => {
-                console.log(response.body.article);
                 expect(response.body.article).toMatchObject({
                     article_id: 1,
                     title: "Living in the shadow of a great man",
