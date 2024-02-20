@@ -67,5 +67,19 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a comment for an article and responds with the stored comment",
+    "queries": [],
+    "exampleResponse": {
+      "comment": {
+          "comment_id": 19,
+          "body": "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+          "article_id": 4,
+          "author": "rogersop",
+          "votes": 0,
+          "created_at": "2024-02-20T19:51:04.743Z"
+        }
+    }
   }
 }
