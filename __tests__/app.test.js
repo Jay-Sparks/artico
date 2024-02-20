@@ -405,3 +405,33 @@ describe("DELETE /api/comments/:comment_id", () => {
             })
     })
 })
+
+describe("GET /api/users", () => {
+    it("returns an array of user objects", () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const users = response.body.users
+                expect(users.length).toBe(4)
+                users.forEach((user) => {
+                    expect(user).toBeObject()
+                })
+            })
+    })
+    it("user objects contain the correct properties", () => {
+        return request(app)
+            .get('/api/users')
+            .expect(200)
+            .then((response) => {
+                const users = response.body.users
+                console.log(users, 'test users');
+                expect(users.length).toBe(4)
+                users.forEach((user) => {
+                    expect(user).toHaveProperty('username')
+                    expect(user).toHaveProperty('name')
+                    expect(user).toHaveProperty('avatar_url')
+                })
+            })
+    })
+})
