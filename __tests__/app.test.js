@@ -144,6 +144,24 @@ describe("Error codes", () => {
                 expect(error.msg).toBe("Not Found")
             })
     })
+    it("GET /api/articles?topic returns a 404 when given a valid topic that is not present in the article data", () => {
+        return request(app)
+            .get('/api/articles?topic=mystery')
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
+            })
+    })
+    it("GET /api/articles?topic returns a 404 when given an invalid topic", () => {
+        return request(app)
+            .get('/api/articles?topic=1234')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
 })
 
 
@@ -425,13 +443,37 @@ describe("GET /api/users", () => {
             .expect(200)
             .then((response) => {
                 const users = response.body.users
-                console.log(users, 'test users');
                 expect(users.length).toBe(4)
                 users.forEach((user) => {
                     expect(user).toHaveProperty('username')
                     expect(user).toHaveProperty('name')
                     expect(user).toHaveProperty('avatar_url')
                 })
+            })
+    })
+})
+
+
+describe("GET /api/articles?topic", () => {
+    it("take a topic query that returns only the associated articles", () => {
+        return request(app)
+            .get('/api/articles?topic=cats')
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles
+                expect(articles).toHaveLength(1)
+                articles.forEach((article) => {
+                    expect(article.topic).toBe("cats")
+                })
+            })
+    })
+    it("returns an empty array when given a topic that exists but is not associated", () => {
+        return request(app)
+            .get('/api/articles?topic=paper')
+            .expect(200)
+            .then((response) => {
+                const { articles } = response.body
+                expect(articles.length).toBe(0)
             })
     })
 })
