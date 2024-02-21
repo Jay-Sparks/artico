@@ -295,6 +295,8 @@ describe("GET /api/articles/:article_id", () => {
                 expect(article).toHaveProperty('created_at')
                 expect(article).toHaveProperty('votes')
                 expect(article).toHaveProperty('article_img_url')
+                expect(article).toHaveProperty('comment_count')
+                expect(article.comment_count).toBe(11)
             })
     })
     it("returns an object with only one article", () => {
