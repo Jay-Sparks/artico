@@ -5,14 +5,14 @@ const {
     fetchArticlesByTopic 
 } = require('../models/articles.model')
 
+const { selectCommentsByArtId } = require('../models/comments.model')
+
 exports.getArticles = ( req, res, next ) => {
     const { topic } = req.query
     const promises = [fetchArticles()]
-
     if(topic) {
         promises.push(fetchArticlesByTopic(topic))
     }
-
     Promise.all(promises).then((promiseResolutions) => {
         if(promiseResolutions.length > 1) {
             res.status(200).send({ articles: promiseResolutions[1] })
@@ -29,7 +29,11 @@ exports.getArticleById = (req, res, next) => {
     const articleId = req.params.article_id
     selectArticleById(articleId)
         .then((article) => {
-            res.status(200).send({ article: article[0] })
+            return selectCommentsByArtId(articleId)
+                .then((comments) => {
+                    article[0].comment_count = comments.length
+                    res.status(200).send({ article: article[0] })
+                })
         })
         .catch((err) => {
             next(err)

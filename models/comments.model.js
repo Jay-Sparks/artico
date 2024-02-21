@@ -1,7 +1,7 @@
 const db = require('../db/connection')
 
 exports.selectCommentsByArtId = (artId) => {
-    return db.query(`SELECT * FROM comments WHERE article_id = ${artId} ORDER BY created_at DESC`)
+    return db.query(`SELECT * FROM comments WHERE article_id =$1 ORDER BY created_at DESC`, [artId])
         .then((response) => {
             return response.rows
         })
