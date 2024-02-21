@@ -23,7 +23,7 @@
     "description": "serves an array of all users",
     "queries": [],
     "exampleResponse": {
-      "users": [{ "username": "bob1", "name": "robert!" , "avatar_url": "url" }]
+      "users": [{ "username": "bob1", "name": "robert" , "avatar_url": "url" }]
     }
   },
   "GET /api/articles": {
