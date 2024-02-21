@@ -1,13 +1,28 @@
-const { selectArticles, selectArticleById, incrementVote } = require('../models/articles.model')
+const { 
+    fetchArticles, 
+    selectArticleById, 
+    incrementVote, 
+    fetchArticlesByTopic 
+} = require('../models/articles.model')
 
 exports.getArticles = ( req, res, next ) => {
-    selectArticles()
-        .then((articles) => {
-            res.status(200).send({ articles: articles })
-        })
-        .catch((err) => {
-            next(err)
-        })
+    const { topic } = req.query
+    const promises = [fetchArticles()]
+
+    if(topic) {
+        promises.push(fetchArticlesByTopic(topic))
+    }
+
+    Promise.all(promises).then((promiseResolutions) => {
+        if(promiseResolutions.length > 1) {
+            res.status(200).send({ articles: promiseResolutions[1] })
+        } else if (promiseResolutions.length <= 1){
+            res.status(200).send({ articles: promiseResolutions[0]})
+        }
+    })
+    .catch((err) => {
+        next(err)
+    })
 }
 
 exports.getArticleById = (req, res, next) => {

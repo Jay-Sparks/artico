@@ -1,6 +1,6 @@
 const db = require('../db/connection')
 
-exports.selectArticles = () => {
+exports.fetchArticles = () => {
     return db.query('SELECT * from articles ORDER BY created_at DESC')
         .then((articles) => {
             const articleArr = articles.rows.map(({ body, ...article }) => {
@@ -41,4 +41,28 @@ exports.incrementVote = (inc_votes, article_id) => {
                 }
             })
     }
+}
+
+exports.fetchArticlesByTopic = (topic) => {
+    if(!isNaN(topic)) {
+        return Promise.reject({status:400, msg: "Bad Request"})
+    }
+    return db.query(`SELECT * FROM articles WHERE topic=$1`, [topic])
+        .then((articleResponse) => {
+            const articles = articleResponse.rows
+            if(articles.length === 0) {
+                return db.query(`SELECT * FROM topics WHERE slug=$1`, [topic])
+                    .then((topicsResponse) => {
+                        const topic = topicsResponse.rows
+                        if(topic.length === 0) {
+                            return Promise.reject({status: 404, msg: "Not Found"})
+                        } else {
+                            return []
+                        }
+                    })
+            } else if (articles.length >= 1){
+                return articles
+            }
+        })
+
 }
