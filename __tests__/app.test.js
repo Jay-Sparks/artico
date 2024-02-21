@@ -70,6 +70,19 @@ describe("Error codes", () => {
                 expect(error.msg).toBe("Bad Request")
             })
     })
+    it("POST /api/articles/:article_id/comments returns a 400 status for an article_id that does not exist", () => {
+        return request(app)
+            .post('/api/articles/99999/comments')
+            .send({
+                username: "rogersop",
+                body: "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
+            })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
     it("POST /api/articles/:article_id/comments returns a 400 status for an incomplete/invalid request body", () => {
         return request(app)
             .post('/api/articles/5/comments')
