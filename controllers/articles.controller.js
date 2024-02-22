@@ -2,21 +2,26 @@ const {
     fetchArticles, 
     selectArticleById, 
     incrementVote, 
-    fetchArticlesByTopic 
+    fetchArticlesByTopic,
+    fetchSortedArticles
 } = require('../models/articles.model')
 
 const { selectCommentsByArtId } = require('../models/comments.model')
 
 exports.getArticles = ( req, res, next ) => {
-    const { topic } = req.query
+    const { topic, sort_by, order } = req.query
     const promises = [fetchArticles()]
     if(topic) {
         promises.push(fetchArticlesByTopic(topic))
     }
+    if(sort_by) {
+        promises.push(fetchArticles(sort_by, order))
+    }
+
     Promise.all(promises).then((promiseResolutions) => {
-        if(promiseResolutions.length > 1) {
+        if(promiseResolutions.length >= 2) {
             res.status(200).send({ articles: promiseResolutions[1] })
-        } else if (promiseResolutions.length <= 1){
+        } else if (promiseResolutions.length = 1){
             res.status(200).send({ articles: promiseResolutions[0]})
         }
     })

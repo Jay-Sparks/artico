@@ -1,8 +1,20 @@
 const db = require('../db/connection')
 
-exports.fetchArticles = () => {
-    return db.query('SELECT * from articles ORDER BY created_at DESC')
-        .then((articles) => {
+exports.fetchArticles = (sort_by="created_at", order="DESC") => {
+
+    const validSortBys = ["created_at", "author", "author_id", "title", "topic", "votes"]
+    const validOrders = ["asc", "desc", "ASC", "DESC"]
+
+    if(!validSortBys.includes(sort_by)){
+        return Promise.reject({status:400, msg: "Bad Request"})
+    }
+    if(!validOrders.includes(order)){
+        return Promise.reject({status:400, msg: "Bad Request"})
+    }
+    let sqlString = `SELECT * FROM articles`
+    sqlString += ` ORDER BY ${sort_by} ${order}`
+    return db.query(sqlString)
+    .then((articles) => {
             const articleArr = articles.rows.map(({ body, ...article }) => {
                 return article
             })
