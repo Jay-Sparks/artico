@@ -3,7 +3,8 @@ const {
     selectArticleById, 
     incrementVote, 
     fetchArticlesByTopic,
-    fetchSortedArticles
+    fetchSortedArticles,
+    insertArticle
 } = require('../models/articles.model')
 
 const { selectCommentsByArtId } = require('../models/comments.model')
@@ -51,6 +52,17 @@ exports.addVoteById = (req, res, next) => {
     incrementVote(inc_votes, article_id)
         .then((updatedArticle) => {
             res.status(200).send({ article: updatedArticle[0] })
+        })
+        .catch((err) => {
+            next(err)
+        })
+}
+
+exports.addArticle = (req, res, next) => {
+    const article = req.body
+    insertArticle(article)
+        .then((newArticle) => {
+            res.status(201).send({ article: newArticle[0] })
         })
         .catch((err) => {
             next(err)

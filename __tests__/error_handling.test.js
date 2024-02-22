@@ -5,12 +5,8 @@ const seed = require('../db/seeds/seed')
 
 const testData = require('../db/data/test-data')
 
-beforeEach(() => {
-    return seed(testData)
-})
-afterAll(() => {
-    db.end()
-})
+beforeEach(() => { return seed(testData) })
+afterAll(() => {db.end()})
 
 describe("Error status codes", () => {
     it("GET /incorrect-url returns a 404 status", () => {
@@ -95,6 +91,73 @@ describe("Error status codes", () => {
                 expect(error.msg).toBe("Bad Request")
             })
     })
+
+    it("POST /api/articles returns a 404 status if the topic does not exist", () => {
+        return request(app)
+            .post('/api/articles')
+            .send({
+                title: "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+                topic: "unknown",
+                author: "rogersop",
+                body: "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+                article_img_url: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+              })
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
+            })
+    })
+    it("POST /api/articles returns a 404 status if the user does not exist", () => {
+        return request(app)
+            .post('/api/articles')
+            .send({
+                title: "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+                topic: "cats",
+                author: "unkown",
+                body: "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+                article_img_url: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+              })
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
+            })
+    })
+    it("POST /api/articles returns a 400 status if the request does not contain a title", () => {
+        return request(app)
+            .post('/api/articles')
+            .send({
+                title: "",
+                topic: "coding",
+                author: "jessjelly",
+                body: "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+                article_img_url: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+              })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("POST /api/articles returns a 400 status if the request does not contain a body", () => {
+        return request(app)
+            .post('/api/articles')
+            .send({
+                title: "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+                topic: "coding",
+                author: "jessjelly",
+                body: "",
+                article_img_url: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+              })
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+
+
     it("POST /api/articles/:article_id/comments returns a 404 status if the username does not exist", () => {
         return request(app)
             .post('/api/articles/5/comments')
@@ -108,6 +171,10 @@ describe("Error status codes", () => {
                 expect(error.msg).toBe("Not Found")
             })
     })
+
+
+
+
     it("PATCH /api/articles/:article_id returns a 404 status if the article_id does not exist", () => {
         return request(app)
             .patch('/api/articles/555555')
