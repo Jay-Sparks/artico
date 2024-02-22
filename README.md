@@ -1,4 +1,5 @@
 # Artico
+
 ### A backend service for creating, reading, updating and deleting news & review articles and comments.
 
 [Artico Endpoints](https://artico-dasj.onrender.com/api)
@@ -17,7 +18,7 @@ Clone the repository from the project respository:
 ```
 https://github.com/Jay-Sparks/nc-news
 ```
-[Project repository](https://github.com/Jay-Sparks/nc-news)
+[Project repository](https://github.com/Jay-Sparks/artico)
 
 
 Install dependencies:
