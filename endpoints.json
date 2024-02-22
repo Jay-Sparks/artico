@@ -74,6 +74,18 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "serves a single object of a user by username",
+    "queries": [],
+    "exampleResponse": {
+      "user": 
+        {
+          "username": "rogersop",
+          "name": "paul",
+          "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+        }
+    }
+  },
   "POST /api/articles/:article_id/comments": {
     "description": "adds a comment for an article and responds with the stored comment",
     "queries": [],

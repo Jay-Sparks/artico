@@ -193,15 +193,25 @@ describe("Error status codes", () => {
                 expect(error.msg).toBe("Bad Request")
             })
     })
+    it("GET /api/users/:username returns a 404 status if no username exists", () => {
+        return request(app)
+            .get('/api/users/not-a-username')
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
+            })
+    })
+    it("GET /api/users/:username returns a 400 status for an invalid username", () => {
+        return request(app)
+            .get('/api/users/99999')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
 })
-
-
-// The endpoint should also accept the following queries:
-
-// sort_by, which sorts the articles by any valid column (defaults to the created_at date).
-// order, which can be set to asc or desc for ascending or descending (defaults to descending).
-// Consider what errors could occur with this endpoint, and make sure to test for them.
-
 
 
 describe("GET /api", () => {
@@ -552,3 +562,39 @@ describe("GET /api/articles?sort_by", () => {
     })
 })
 
+
+describe("GET /api/users/:username", () => {
+    it("returns a user object", () => {
+        return request(app)
+            .get('/api/users/rogersop')
+            .expect(200)
+            .then((response) => {
+                const userObj = response.body
+                expect(userObj === Object(userObj)).toEqual(true)
+            })
+    })
+    it("Object contains correct properties", () => {
+        return request(app)
+            .get('/api/users/rogersop')
+            .expect(200)
+            .then((response) => {
+                const user = response.body.user
+                expect(user).toMatchObject(
+                    {
+                        username: 'rogersop',
+                        name: 'paul',
+                        avatar_url: 'https://avatars2.githubusercontent.com/u/24394918?s=400&v=4'
+                    }
+                )
+        })
+    })
+    it("returns an object with only one user", () => {
+        return request(app)
+            .get('/api/users/rogersop')
+            .expect(200)
+            .then((response) => {
+                const userArr = Object.values(response.body)
+                expect(userArr.length).toBe(1)
+            })
+    })
+})
