@@ -1,4 +1,4 @@
-const { selectCommentsByArtId, insertComment, deleteComment } = require('../models/comments.model')
+const { selectCommentsByArtId, insertComment, incrementCommentVote, deleteComment } = require('../models/comments.model')
 
 exports.getCommentsByArtId = ( req, res, next ) => {
     const articleId = req.params.article_id
@@ -36,4 +36,16 @@ exports.removeComment = ( req, res, next ) => {
         .catch((err) => {
             next(err)
         })
-}       
+}
+
+exports.updateCommentVote = (req, res, next) => {
+    const { comment_id } = req.params
+    const { inc_votes } = req.body
+    incrementCommentVote(inc_votes, comment_id)
+        .then((updatedComment) => {
+            res.status(200).send({ comment: updatedComment[0] })
+        })
+        .catch((err) => {
+            next(err)
+        })
+}
