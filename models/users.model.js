@@ -6,3 +6,19 @@ exports.selectUsers = () => {
             return rows
         })
 }
+
+exports.fetchUserByUsername = (username) => {
+    const numberTest = Number(username)
+    if(!isNaN(numberTest)) {
+        return Promise.reject({status: 400, msg: "Bad Request"})
+    } else {
+        return db.query(`SELECT * FROM users WHERE username=$1`, [username])
+            .then(({rows}) => {
+                if(rows.length === 0) {
+                    return Promise.reject({status: 404, msg: "Not Found"})
+                } else {
+                    return rows[0]
+                }
+            })
+    }
+}

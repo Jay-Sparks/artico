@@ -3,10 +3,6 @@ const { getCommentsByArtId, addCommentByArtId } = require('../controllers/commen
 
 const articlesRouter = require('express').Router();
 
-// articlesRouter.get('/', (req, res) => {
-//   res.status(200).send('All OK from /api/users');
-// });
-
 articlesRouter.get('/', getArticles)
 
 articlesRouter.get('/:article_id', getArticleById)
