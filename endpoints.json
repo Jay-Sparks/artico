@@ -42,32 +42,6 @@
       ]
     }
   },
-  "GET /api/articles?sort_by=author_id": {
-    "description": "serves an array of all articles sorted by a valid column in asc or dec order",
-    "queries": ["created_at", "author", "author_id", "title", "topic", "votes"],
-    "exampleResponse": {
-      "articles": [
-        {
-          "article_id": 1,
-          "title": "title of a book 2",
-          "topic": "research",
-          "author": "rogersop",
-          "created_at": "2020-08-03T13:14:00.000Z",
-          "votes": 0,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        },
-        {
-          "article_id": 2,
-          "title": "title of a book 2",
-          "topic": "Non-fiction",
-          "author": "rogersop",
-          "created_at": "2020-09-03T13:14:00.000Z",
-          "votes": 2,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        }
-      ]
-    }
-  },
   "GET /api/articles/:article_id": {
     "description": "serves a single object of an article by article_id",
     "queries": [],
