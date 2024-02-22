@@ -76,5 +76,32 @@ exports.fetchArticlesByTopic = (topic) => {
                 return articles
             }
         })
+}
 
+exports.insertArticle = (article) => {
+    const { title, topic, author, body,  article_img_url } = article
+    if(title.length === 0 || body.length === 0) {
+        return Promise.reject({status: 400, msg: "Bad Request"})
+    }
+    return db.query(`SELECT * from topics WHERE slug=$1`, [topic])
+        .then(({rows}) => {
+            if(rows.length === 0) {
+                return Promise.reject({status: 404, msg: "Not Found"})
+            }
+            return db.query(`SELECT * from users WHERE username=$1`, [author])
+                .then(({rows}) => {
+                    if(rows.length === 0) {
+                        return Promise.reject({status: 404, msg: "Not Found"})
+                    }
+                    return db.query(
+                        `INSERT INTO articles 
+                        ( title, topic, author, body, article_img_url) 
+                        VALUES ($1, $2, $3, $4, $5) RETURNING *;`,
+                        [ title, topic, author, body,  article_img_url ]
+                        )
+                        .then(({rows}) => {
+                            return rows
+                        })
+                    })
+                })
 }

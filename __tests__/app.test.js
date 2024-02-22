@@ -17,7 +17,6 @@ describe("GET /api", () => {
                 expect(response.body.endpoints).toHaveProperty("GET /api/topics")
                 const endpoints = response.body.endpoints
                 const endpointArr = Object.values(endpoints)
-                
                 endpointArr.forEach((endpoint) => {
                     expect(endpoint).toHaveProperty('description')
                     expect(endpoint).toHaveProperty('queries')
@@ -167,6 +166,54 @@ describe("GET /api/articles/:article_id/comments", () => {
             })
     })
 })
+
+describe("POST /api/articles", () => {
+    it("returns an object with the correct properties", () => {
+        return request(app)
+            .post("/api/articles")
+            .send({
+                title: "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+                topic: "cats",
+                author: "rogersop",
+                body: "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+                article_img_url: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+              })
+            .expect(201)
+            .then((response) => {
+                const article = response.body.article
+                expect(article).toHaveProperty('body')
+                expect(article).toHaveProperty('votes')
+                expect(article).toHaveProperty('author')
+                expect(article).toHaveProperty('article_id')
+                expect(article).toHaveProperty('created_at')
+            })
+        })
+        it("article is stored correctly in database", () => {
+            return request(app)
+                .post("/api/articles")
+                .send({
+                    title: "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+                    topic: "cats",
+                    author: "rogersop",
+                    body: "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+                    article_img_url: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+                  })
+                .expect(201)
+                .then((response) => {
+                    const title = "The Rise Of Thinking Machines: How IBM's Watson Takes On The World"
+                    return db.query(`SELECT * FROM articles WHERE title=$1`, [title])
+                    .then((returnedArticle) => {
+                        const articleObj = JSON.parse(JSON.stringify(returnedArticle.rows[0]))
+                        expect(articleObj).toEqual(expect.objectContaining(response.body.article))
+                        expect(articleObj).toHaveProperty('body')
+                        expect(articleObj).toHaveProperty('votes')
+                        expect(articleObj).toHaveProperty('author')
+                        expect(articleObj).toHaveProperty('article_id')
+                        expect(articleObj).toHaveProperty('created_at')
+                    })
+                })
+        })
+    })
 
 describe("POST /api/articles/:article_id/comments", () => {
     it("returns a comment object with the correct properties", () => {
