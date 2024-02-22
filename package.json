@@ -1,7 +1,7 @@
 {
   "name": "artico",
   "version": "1.0.0",
-  "description": "be-nc-news",
+  "description": "back-end CRUD service for news & review articles",
   "main": "listen.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",

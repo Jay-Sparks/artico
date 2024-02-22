@@ -13,7 +13,7 @@ afterAll(() => {
     db.end();
 })
 
-describe("Error codes", () => {
+describe("Error status codes", () => {
     it("GET /incorrect-url returns a 404 status", () => {
         return request(app)
             .get('/apx')
@@ -175,7 +175,32 @@ describe("Error codes", () => {
                 expect(error.msg).toBe("Bad Request")
             })
     })
+    it("GET /api/articles?sort_by=not-a-column returns a 400 when given an invalid table column", () => {
+        return request(app)
+            .get('/api/articles?sort_by=not-a-column')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("GET /api/articles?sort_by/order=alphabetical returns a 400 when given an invalid order", () => {
+        return request(app)
+            .get('/api/articles?sort_by=author&order=alphabetical')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
 })
+
+
+// The endpoint should also accept the following queries:
+
+// sort_by, which sorts the articles by any valid column (defaults to the created_at date).
+// order, which can be set to asc or desc for ascending or descending (defaults to descending).
+// Consider what errors could occur with this endpoint, and make sure to test for them.
 
 
 
@@ -260,7 +285,7 @@ describe("GET /api/articles", () => {
                 })
             })
     })
-    it("articles are sorted by date in descending order", () => {
+    it("articles are sorted by date in descending order by default", () => {
         return request(app)
             .get('/api/articles')
             .expect(200)
@@ -492,3 +517,38 @@ describe("GET /api/articles?topic", () => {
             })
     })
 })
+
+
+describe("GET /api/articles?sort_by", () => {
+    it("takes a sort_by query that returns the articles sorted by a valid column", () => {
+        return request(app)
+            .get('/api/articles?sort_by=author')
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles
+                expect(articles).toHaveLength(13)
+                expect(articles).toBeSortedBy("author", {descending: true})
+            })
+    })
+    it("takes an order query that returns the articles sorted in ascending order defaulting to descending", () => {
+        return request(app)
+            .get('/api/articles?sort_by=author&order=asc')
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles
+                expect(articles).toHaveLength(13)
+                expect(articles).toBeSortedBy("author", {ascending: true})
+            })
+    })
+    it("order query defaults to descending", () => {
+        return request(app)
+            .get('/api/articles?sort_by=author')
+            .expect(200)
+            .then((response) => {
+                const articles = response.body.articles
+                expect(articles).toHaveLength(13)
+                expect(articles).toBeSortedBy("author", {descending: true})
+            })
+    })
+})
+
