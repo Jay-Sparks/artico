@@ -4,7 +4,6 @@ const topicsRouter = require('./topics-router')
 const commentsRouter = require('./comments-router')
 const usersRouter = require('./users-router')
 
-
 apiRouter.use('/users', usersRouter)
 
 apiRouter.use('/articles', articlesRouter)
