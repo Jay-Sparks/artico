@@ -149,5 +149,6 @@
     "description": "removes a comment by the comment_id",
     "queries": [],
     "exampleResponse": {}
-  }
+  },
+  "TEST": {}
 }
