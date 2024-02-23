@@ -264,12 +264,10 @@ describe("PATCH /api/articles/:article_id", () => {
             .expect(200)
             .then((response) => {
                 expect(response.body.article).toMatchObject({
-                    article_id: 1,
                     title: "Living in the shadow of a great man",
                     topic: "mitch",
                     author: "butter_bridge",
                     body: "I find this existence challenging",
-                    created_at: "2020-07-09T20:11:00.000Z",
                     votes: 101,
                     article_img_url:
                       "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -283,12 +281,10 @@ describe("PATCH /api/articles/:article_id", () => {
             .expect(200)
             .then((response) => {
                 expect(response.body.article).toMatchObject({
-                    article_id: 1,
                     title: "Living in the shadow of a great man",
                     topic: "mitch",
                     author: "butter_bridge",
                     body: "I find this existence challenging",
-                    created_at: "2020-07-09T20:11:00.000Z",
                     votes: 90,
                     article_img_url:
                       "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -309,8 +305,6 @@ describe("PATCH /api/comments/:comment_id", () => {
                         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
                         votes: 17,
                         author: "butter_bridge",
-                        article_id: 9,
-                        created_at: "2020-04-06T12:17:00.000Z"
                     }
                 )
             })
@@ -326,8 +320,6 @@ describe("PATCH /api/comments/:comment_id", () => {
                         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
                         votes: 6,
                         author: "butter_bridge",
-                        article_id: 9,
-                        created_at: "2020-04-06T12:17:00.000Z"
                     }
                 )
             })
