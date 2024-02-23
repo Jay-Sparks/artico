@@ -42,6 +42,22 @@
       ]
     }
   },
+  "GET /api/articles paginated": {
+    "description": "serves an array of paginated articles",
+    "queries": [ "limit", "p" ],
+    "exampleResponse": [
+        {
+          "article_id": 7,
+          "title": "Z",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "created_at": "2020-01-07T14:08:00.000Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "total_count": 13
+        }
+      ]
+  },
   "POST /api/articles": {
     "description": "adds a new article and returns the new article",
     "queries": [],
@@ -137,7 +153,7 @@
     "queries": [],
     "exampleResponse": {
       "comment": {
-        "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+        "body": "Lorum Ipsum Doughnuts Cupcake nutella dolar marshmallow",
         "votes": 17,
         "author": "butter_bridge",
         "article_id": 9,
