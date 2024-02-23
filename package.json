@@ -4,13 +4,15 @@
   "description": "back-end CRUD service for news & review articles",
   "main": "listen.js",
   "scripts": {
-    "setup-dbs": "psql -f ./db/setup.sql",
-    "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest",
     "dev": "nodemon listen.js",
+    "test": "jest",
+    "test-utils": "jest utils" ,
+    "test-app": "jest app error_handling",
     "prepare": "husky install",
     "start": "node listen.js",
-    "seed-prod": "NODE_ENV=production npm run seed"
+    "seed-prod": "NODE_ENV=production npm run seed",
+    "setup-dbs": "psql -f ./db/setup.sql",
+    "seed": "node ./db/seeds/run-seed.js"
   },
   "repository": {
     "type": "git",
