@@ -7,7 +7,7 @@
     "dev": "nodemon listen.js",
     "test": "jest",
     "test-utils": "jest utils" ,
-    "test-app": "jest app error_handling",
+    "test-app": "jest app",
     "prepare": "husky install",
     "start": "node listen.js",
     "seed-prod": "NODE_ENV=production npm run seed",
