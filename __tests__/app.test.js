@@ -8,6 +8,7 @@ const testData = require('../db/data/test-data')
 beforeEach(() => {return seed(testData)})
 afterAll(() => {db.end();})
 
+
 describe("Error status codes", () => {
     it("GET /incorrect-url returns a 404 status", () => {
         return request(app)
