@@ -393,6 +393,40 @@ describe("GET /api/articles?topic", () => {
     })
 })
 
+describe("GET /api/articles?limit pagination", () => {
+    it("returns an array of objects for the first page if no p value is provided", () => {
+        return request(app)
+        .get('/api/articles?limit=5')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            expect(articles.length).toBe(5)
+        })
+    })
+    it("returns an array of objects for the requested page provided by the p value", () => {
+        return request(app)
+        .get('/api/articles?limit=5&p=2')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            expect(articles.length).toBe(5)
+        })
+    })
+    it("returns an array of article objects that includes the correct total_count value", () => {
+        return request(app)
+        .get('/api/articles?limit=5&p=2')
+        .expect(200)
+        .then((response) => {
+            const { articles } = response.body
+            expect(articles.length).toBe(5)
+            articles.forEach((article) => {
+                expect(article).toHaveProperty("total_count")
+                expect(article.total_count).toBe(13)
+            })
+        })
+    })
+})
+
 describe("GET /api/articles?sort_by", () => {
     it("takes a sort_by query that returns the articles sorted by a valid column", () => {
         return request(app)
@@ -741,6 +775,24 @@ describe("Error status codes", () => {
             .then((response) => {
                 const error = response.body
                 expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("GET /api/articles?limit returns a 400 status for an invalid p parameter", () => {
+        return request(app)
+            .get('/api/articles?limit=5&p=three')
+            .expect(400)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Bad Request")
+            })
+    })
+    it("GET /api/articles?limit returns a 404 status if p value is larger than total number of pages available", () => {
+        return request(app)
+            .get('/api/articles?limit=5&p=9999')
+            .expect(404)
+            .then((response) => {
+                const error = response.body
+                expect(error.msg).toBe("Not Found")
             })
     })
 })

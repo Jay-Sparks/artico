@@ -1,10 +1,9 @@
 const db = require('../db/connection')
 
-exports.fetchArticles = (sort_by="created_at", order="DESC") => {
 
+exports.fetchArticles = (sort_by="created_at", order="DESC") => {
     const validSortBys = ["created_at", "author", "author_id", "title", "topic", "votes"]
     const validOrders = ["asc", "desc", "ASC", "DESC"]
-
     if(!validSortBys.includes(sort_by)){
         return Promise.reject({status:400, msg: "Bad Request"})
     }
@@ -104,4 +103,30 @@ exports.insertArticle = (article) => {
                         })
                     })
                 })
+}
+
+exports.fetchPaginatedArticles = (limit=10, p) => {
+    return db.query(`SELECT * FROM articles`)
+        .then(({rows}) => {
+            // console.log(rows, "MODEL");
+            const total_count = rows.length
+            const articleArr = rows.map(({ body, ...article }) => {
+                const articleCopy = {...article}
+                articleCopy.total_count = total_count
+                return articleCopy
+            })
+            const totalPages = Math.ceil(total_count / JSON.parse(limit))
+            let requestedPage
+            if(!p){
+                requestedPage = 1
+            } else if(p && isNaN(p)) {
+                return Promise.reject({status:400, msg: "Bad Request"})
+            } else if(JSON.parse(p) > totalPages) {
+                return Promise.reject({status:404, msg: "Not Found"})
+            } else {
+                requestedPage = JSON.parse(p)
+            }
+            const skip = (requestedPage - 1) * limit
+            return articleArr.slice(skip, JSON.parse(limit) + skip)
+        })
 }
