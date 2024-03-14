@@ -54,11 +54,11 @@ exports.incrementVote = (inc_votes, article_id) => {
     }
 }
 
-exports.fetchArticlesByTopic = (topic) => {
+exports.fetchArticlesByTopic = (topic, sort_by="votes", order="desc") => {
     if(!isNaN(topic)) {
         return Promise.reject({status:400, msg: "Bad Request"})
     }
-    return db.query(`SELECT * FROM articles WHERE topic=$1`, [topic])
+    return db.query(`SELECT * FROM articles WHERE topic=$1 ORDER BY ${sort_by} ${order}`, [topic])
         .then((articleResponse) => {
             const articles = articleResponse.rows
             if(articles.length === 0) {

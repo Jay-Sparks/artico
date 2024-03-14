@@ -13,7 +13,7 @@ exports.getArticles = ( req, res, next ) => {
     const { topic, sort_by, order, limit, p } = req.query
     const promises = [fetchArticles()]
     if(topic) {
-        promises.push(fetchArticlesByTopic(topic))
+        promises.push(fetchArticlesByTopic(topic, sort_by, order))
     }
     if(sort_by) {
         promises.push(fetchArticles(sort_by, order))
