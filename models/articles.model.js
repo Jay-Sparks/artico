@@ -105,6 +105,23 @@ exports.insertArticle = (article) => {
                 })
 }
 
+exports.deleteArticle = (article_id) => {
+    const articleNum = Number(article_id)
+    if(isNaN(articleNum)) {
+        return Promise.reject({status: 400, msg: "Bad Request"})
+    } else {
+        return db.query('DELETE FROM articles WHERE article_id = $1 RETURNING *', [articleNum])
+            .then(({rows}) => {
+                if(rows.length === 0) {
+                    return Promise.reject({ status: 404, msg: "Not Found"})
+                }
+                else {
+                    return { status: 204 }
+                }
+            })
+    }
+}
+
 exports.fetchPaginatedArticles = (limit=10, p) => {
     return db.query(`SELECT * FROM articles`)
         .then(({rows}) => {

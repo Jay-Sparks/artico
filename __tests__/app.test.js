@@ -326,6 +326,21 @@ describe("PATCH /api/comments/:comment_id", () => {
     })
 })
 
+
+describe("DELETE /api/articles/:article_id", () => {
+    it("article no longer exists in article table and returns a 204 status", () => {
+        return request(app)
+            .delete('/api/articles/8')
+            .expect(204)
+            .then(() => {
+                return db.query('SELECT * FROM articles WHERE article_id = 8')
+                    .then(({rows}) => {
+                        expect(rows.length === 0).toBe(true)
+                    }) 
+            })
+    })
+})
+
 describe("DELETE /api/comments/:comment_id", () => {
     it("comment no longer exists in comments table and returns a 204 status", () => {
         return request(app)

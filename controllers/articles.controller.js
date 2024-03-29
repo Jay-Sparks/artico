@@ -4,7 +4,8 @@ const {
     incrementVote, 
     fetchArticlesByTopic,
     fetchPaginatedArticles,
-    insertArticle
+    insertArticle,
+    deleteArticle
 } = require('../models/articles.model')
 
 const { selectCommentsByArtId } = require('../models/comments.model')
@@ -66,6 +67,17 @@ exports.addArticle = (req, res, next) => {
     insertArticle(article)
         .then((newArticle) => {
             res.status(201).send({ article: newArticle[0] })
+        })
+        .catch((err) => {
+            next(err)
+        })
+}
+
+exports.removeArticle = ( req, res, next ) => {
+    const { article_id } = req.params
+    return deleteArticle(article_id)
+        .then(() => {
+            res.status(204).send()
         })
         .catch((err) => {
             next(err)
