@@ -18,5 +18,3 @@ articlesRouter.post('/:article_id/comments', addCommentByArtId)
 articlesRouter.delete('/:article_id', removeArticle)
 
 module.exports = articlesRouter
-
-
